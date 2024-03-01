@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\LoginController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::get("/about",function(){
+     echo "about us";
+
+     
+});
+Route::get("/", [BookController::class, "index"])->name("booklist");
+Route::get("/store",[BookController::class, "stare"])->name('add.user');
+Route::post("/store",[BookController::class, "store"]);
+Route::get("/update",function(){
+    return view("books.update");
+});
+Route::get("/update/{id}/{page?}",[BookController::class,"updated"])->name('update');
+Route::get("/delete/{id}",[BookController::class, "delete"])->name("delete");
+Route::put("/update/{id}/{page?}",[BookController::class,"update1"])->name("updatebook");
+Route::get("search",[BookController::class,"search"])->name("search");
+
+Route::get("/login",function(){return view('login'); });
+Route::post("/login",[LoginController::class, "index"])->name('login');
+Route::post('/signup',[LoginController::class,"store"])->name('signup');
+Route::get('/signup',function(){return view("books.signup");});
+Route::get('/logout', function () {return view('logout');})->name('logout');
+Route::post('/logout',[LoginController::class,"logout"])->name("Logout");
