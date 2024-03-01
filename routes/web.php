@@ -34,7 +34,9 @@ Route::get("/delete/{id}",[BookController::class, "delete"])->name("delete");
 Route::put("/update/{id}/{page?}",[BookController::class,"update1"])->name("updatebook");
 Route::get("search",[BookController::class,"search"])->name("search");
 
-Route::get("/login",function(){return view('login'); });
+Route::get("/login",function(){
+    $message=session("message") ?? null;
+    return view('login',["message"=>$message]); });
 Route::post("/login",[LoginController::class, "index"])->name('login');
 Route::post('/signup',[LoginController::class,"store"])->name('signup');
 Route::get('/signup',function(){return view("books.signup");});

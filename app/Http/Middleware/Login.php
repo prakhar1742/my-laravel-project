@@ -25,7 +25,7 @@ class Login
             return $next($request);
         }    
         else{
-            return redirect("login");
+            return redirect("login")->with("message","You need to log in to access the page");
         }
         
         // $shivam= session()->get("key");

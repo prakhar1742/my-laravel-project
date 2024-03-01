@@ -18,7 +18,7 @@ class LoginController extends Controller
         $login=login::where("_id",'=',$req->username)->first();
 
         if(!$login){
-            return view("books.signup");
+            return view("books.signup")->with("signup_message","You are not a member.Please sign up fisrt");
         }
         if($login->password!==$req->password){
             return "password incorrect";

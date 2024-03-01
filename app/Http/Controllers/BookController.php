@@ -90,7 +90,7 @@ class BookController extends Controller
         // print_r($book);
 
         return redirect()->Route("updated",["id"=>$book->title]);
-        dd("hello");
+        
     }
 
     /**

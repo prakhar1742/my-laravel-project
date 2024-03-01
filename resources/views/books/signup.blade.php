@@ -67,6 +67,12 @@
 <body>
     <div class="container">
         <h2>Sign Up</h2>
+        @if(isset($signup_message))
+        <div style="background-color: #ffe5b2; padding: 10px; border: 1px solid #ffcc80; border-radius: 5px;">
+    {{ $signup_message }}
+</div>
+
+    @endif
         <form action="{{route('signup')}}" method="post">
             @csrf
             <div class="form-group">

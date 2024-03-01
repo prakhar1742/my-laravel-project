@@ -62,8 +62,17 @@
 </style>
 </head>
 <body>
+    
 
 <div class="container">
+    @if($message)
+    <div style="background-color: #ffe5b2; padding: 10px; border: 1px solid #ffcc80; border-radius: 5px;">
+
+        {{ $message }}
+        </div>
+
+    @endif
+
     <h2>Log In</h2>
     <form action="{{Route('login')}}" method="post">
         @csrf
