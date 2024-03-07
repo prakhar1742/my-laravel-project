@@ -42,3 +42,8 @@ Route::post('/signup',[LoginController::class,"store"])->name('signup');
 Route::get('/signup',function(){return view("books.signup");});
 Route::get('/logout', function () {return view('logout');})->name('logout');
 Route::post('/logout',[LoginController::class,"logout"])->name("Logout");
+
+Route::get("/users",[LoginController::class,"Users"])->middleware("admin");
+Route::get("/unauthorised",function(){return view("unauthorised");});
+
+Route::get("/users/{username}",[BookController::class,"username"]);

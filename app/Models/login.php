@@ -7,5 +7,6 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class login extends Eloquent
 {
-    
+    protected $collection="logins";
+
 }

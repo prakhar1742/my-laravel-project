@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\login;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -143,5 +144,8 @@ class BookController extends Controller
             }
             return view("books.search",['book'=>$book,"search"=>$req->search]);
 
+        }
+        public function username(login $username){
+            return $username;
         }
     }

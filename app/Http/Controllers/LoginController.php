@@ -27,9 +27,15 @@ class LoginController extends Controller
             return 'email incorrect';
         }
         else{
+            session()->forget('username');
+            session()->forget("admin");
             session()->put('username',$req->username);
-            session()->put("key",1);
+            
             // dd(session()->get("username"));
+            if($login->admin){
+                
+                session()->put("admin",1);
+            }
             return redirect('/');
         }
     }
@@ -106,6 +112,11 @@ class LoginController extends Controller
     public function logout()
     {
         session()->forget("username");
+        session()->forget("admin");
         return redirect("/login"); 
+    }
+    public function Users(){
+        $users=login::all();
+        return view("userlist",["users"=>$users]);
     }
 }
