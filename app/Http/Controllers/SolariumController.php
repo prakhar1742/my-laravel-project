@@ -28,7 +28,9 @@ class SolariumController extends Controller
         $data = $result->getDocuments();
 
         // Return response
-        return response()->json($data);
+        // return response()->json($data);
+        return view("solrSearch",["data"=>$data]);    
+
         } catch (\Solarium\Exception $e) {
             return response()->json('ERROR', 500);
         }
