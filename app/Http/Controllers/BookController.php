@@ -60,8 +60,11 @@ class BookController extends Controller
      * @param  \App\Models\Book  $book
      * @return \Illuminate\Http\Response
      */
-    public function show(Book $book)
+    public function show(Request $req)
     {
+        dd($req);
+        $name=["name"=>"Prakhar"];
+        return $name;
     }
 
     /**
@@ -123,7 +126,7 @@ class BookController extends Controller
         }
         public function update1(Request $req, $id,$page)
 {
-    $book = Book::findOrFail($id); // Use findOrFail to throw 404 if book is not found
+    $book = Book::findOrFail($id);
     $book->title = $req->title;
     $book->author = $req->author;
     $book->published_year = $req->published_year;

@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\SolariumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,3 +49,12 @@ Route::get("/users",[LoginController::class,"Users"])->middleware("admin");
 Route::get("/unauthorised",function(){return view("unauthorised");});
 
 Route::get("/users/{username}",[BookController::class,"username"]);
+
+
+Route::get("/ajax",[AjaxController::class,"index"]);
+Route::get("/ajax/data",[AjaxController::class,"data"]);
+Route::post("/ajax/show",[BookController::class,"show"]);
+
+
+Route::get('/ping',[SolariumController::class,"ping"]);
+Route::get("/query",function(){return view("query");});
