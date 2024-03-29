@@ -58,3 +58,6 @@ Route::post("/ajax/show",[BookController::class,"show"]);
 
 Route::get('/ping',[SolariumController::class,"ping"]);
 Route::get("/query",function(){return view("query");});
+Route::get("/adddata",function(){return view("solrinput");});
+Route::post("/submit",[SolariumController::class,"addData"]);
+Route::get("/submit/{idd}/{searchh}",[SolariumController::class,"search"]);

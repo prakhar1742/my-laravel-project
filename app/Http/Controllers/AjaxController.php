@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ajax;
+use App\Models\login;
 use Illuminate\Http\Request;
 
 
@@ -87,5 +87,34 @@ class AjaxController extends Controller
         $name=["name"=>"prakhar","course"=>"MCA"];
         // dd($name);
         return $name;
+    }
+
+    public function api(Request $req){
+        $login=login::where("_id",'=',$req->username)->first();
+
+        if(!$login){
+            return response()->json(["signup_message"=>"You are not a member.Please sign up fisrt"]);
+        }
+        if($login->password!==$req->password){
+            return response()->json(["message"=>"password incorrect"]);
+        }
+        if($login->email !== $req->email){
+            return response()->json(["message"=>"email incorrect"]);
+        }
+        else{
+            session()->forget('username');
+            session()->forget("admin");
+            session()->put('username',$req->username);
+            
+            // dd(session()->get("username"));
+            if($login->admin){
+                
+                session()->put("admin",1);
+            }
+            return response()->json(["message"=>"logged","admin status"=>session()->get("admin")]);
+        }
+    }
+    public function get(Request $req){
+            return response()->json(["all users"=>login::all()]);
     }
 }

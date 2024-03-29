@@ -40,17 +40,28 @@
             color: #666;
             margin-top: 20px;
         }
+        em{
+            bachground-color:red;
+        }
     </style>
 </head>
 <body>
+    @if($facet !=null)
+    <div style="text-align: left;position: fixed;">
+@foreach($facet as $idd=>$count)
+    <a href="{{ url('/submit') . '/' . $idd .'/'.$searchh}}"><p >{{$count}} found with subject ID {{$idd}}</p></a>
+@endforeach
+@endif
+    </div>
     <div class="container">
-        <a href="{{redirect()->back()}}"> <button> back </button></a>
+        <a href="{{url('/query')}}"> <button> back </button></a>
         @forelse($data as $d)
             <div class="card">
-                <h2>{{ $d->name }}</h2>
-                <p>ID: {{ $d->id }}</p>
-                <p>Address: {{ $d->address }}</p>
-                <p>Username: {{ $d->username }}</p>
+                <h2>Sub ID {{ $d->sub_id }}</h2>
+                <!-- <p>ID: {{ $d->id }}</p> -->
+                <p>subject name: {{ $d->subject }}</p>
+                <p>subject name hindi: {{ $d->subject_hindi }}</p>
+                <p>subject ID: {{$d->subject_ID}}</p>
             </div>
         @empty
             <p class="empty-message">No data found.</p>

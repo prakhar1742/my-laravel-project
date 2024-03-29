@@ -21,7 +21,7 @@
                 event.preventDefault(); // Prevent default form submission
 
                 var formdata=new fommData();
-                formdata.append("query",$("#form input[name='query']").val());
+                formdata.append()
 
                 $.ajax({
                     headers: {
@@ -29,7 +29,7 @@
                     },
                     url: "{{ url('/ajax/show') }}",
                     type: "POST",
-                    data:formdata,
+                    data:data,
                     processData: false,
                     contentType: false,
                     success: function(response){
