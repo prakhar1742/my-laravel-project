@@ -5,6 +5,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\SolariumController;
+use App\Http\Controllers\CourseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,3 +62,6 @@ Route::get("/query",function(){return view("query");});
 Route::get("/adddata",function(){return view("solrinput");});
 Route::post("/submit",[SolariumController::class,"addData"]);
 Route::get("/submit/{idd}/{searchh}",[SolariumController::class,"search"]);
+Route::get("/course",function(){return view("coursesearch");});
+Route::get("/courseresult",[CourseController::class,"ping"]);
+Route::get("/coursesubmit/{idd}/{searchh}",[CourseController::class,"search"]);

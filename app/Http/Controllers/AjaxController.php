@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class AjaxController extends Controller
 {
+    protected $client;
+
+    public function __construct(\Solarium\Client $client)
+    {
+        $this->client = $client;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -83,11 +89,43 @@ class AjaxController extends Controller
     {
         //
     }
-    public function data(){
-        $name=["name"=>"prakhar","course"=>"MCA"];
-        // dd($name);
-        return $name;
+    public function data(Request $req)
+{
+    $searchh = $req->param ?? "*:*";
+    
+    try {
+        $query = $this->client->createSelect();
+
+        // Create facet field outside the loop
+        $facetField = $query->getFacetSet()->createFacetField('subject_name');
+        $facetField->setField('subject_name')->setMinCount(1)->setLimit(5);
+
+        if ($searchh != "*:*") {
+            $data = [];
+            $facet = [];
+            $sea = '"' . $searchh . '"'; // Enclose search term within double quotes
+            $query->setQuery("exam_name:" . $sea . " OR subject_name:" . $sea . " OR chapter_name:" . $sea . " OR title:" . $sea);
+
+            // Execute the query
+            $result = $this->client->select($query);
+
+            // Collect facet values for this search term
+            $da = $result->getDocuments();
+            $facetSet = $result->getFacetSet();
+            $categoryFacet = $facetSet->getFacet('subject_name');
+            $facet += $categoryFacet->getValues();
+            $data = array_merge($data, $da);
+        } else {
+            // If search is empty, execute the query directly
+            $facet = "Enter search term";
+        }
+
+        return response()->json(["facet" => $facet, "searchh" => $searchh]);
+
+    } catch (\Solarium\Exception $e) {
+        return response()->json('ERROR', 500);
     }
+}
 
     public function api(Request $req){
         $login=login::where("_id",'=',$req->username)->first();

@@ -19,5 +19,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post("/api",[AjaxController::class,"api"]);
+Route::post("/api",[AjaxController::class,"data"]);
 Route::get("/get",[AjaxController::class,"get"]);
