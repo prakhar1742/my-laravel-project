@@ -119,17 +119,43 @@ class CourseController extends Controller
     }
 
     public function spellCheck(Request $req){
-        $query = $this->client->createSelect();
-        $queryTerm = $req->param; 
-        $query->setQuery($queryTerm);
-        $query->setHandler('spell');
 
-        $spellcheck = $query->getSpellcheck();
-        $spellcheck->setDictionary('default'); 
-        $spellcheck->setCount(5);      
+        $query = $this->client->createSpellcheck();
+$query->setQuery($req->param);
+$query->setDictionary('default');
+$query->setCount(5); // number of suggestions to return
 
-        $result = $this->client->select($query);
-        return response()->json(["spellCheck"=>$result]);
+// execute the query and get the result
+$result = $this->client->execute($query);;
+$suggestions = $result->getResults();
+$query_arr=explode(" ",$req->param);
+$out="";
+
+if(!empty($suggestions)){   
+    foreach($query_arr as $arr){
+        if(array_key_exists($arr,$suggestions)){
+            
+            $out=$out.$suggestions[$arr]->getSuggestions()[0]["word"]." ";
+        }
+        else{
+            $out=$out.$arr." ";
+        }
+    } 
+}
+
+
+        // $query = $this->client->createSelect();
+        // $queryTerm = $req->param; 
+        // $query->setQuery($queryTerm);
+        // $query->setHandler('spell');
+
+        // $spellcheck = $query->getSpellcheck();
+        // $spellcheck->setDictionary('default'); 
+        // $spellcheck->setCount(5);      
+
+        // $result = $this->client->select($query);
+        // $spell=$result->get
+        return response()->json(["spellCheck"=>$out]);
 
         
         
@@ -137,9 +163,9 @@ class CourseController extends Controller
 
     public function suggester(Request $req){
         $query = $this->client->createSuggester();
-$query->setQuery($req->param); //multiple terms
+$query->setQuery($req->param);
 $query->setDictionary('FuzzySuggester');
-$query->setCount(3);
+$query->setCount(5);
 
 $resultset = $this->client->suggester($query);
 $suggestions=array();
