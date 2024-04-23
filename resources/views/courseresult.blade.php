@@ -58,7 +58,7 @@
 @endif
     </div>
     <div class="container">
-        <a href="{{url('/query')}}"> <button> back </button></a>
+        <a href="{{url('/course')}}"> <button> back </button></a>
         @forelse($data as $d)
             <div class="card">
                 <h2>Exam name {{ $d->exam_name }}</h2>

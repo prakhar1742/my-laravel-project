@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\CourseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post("/api",[AjaxController::class,"data"]);
 Route::get("/get",[AjaxController::class,"get"]);
+Route::post("/spellcheck",[CourseController::class,"spellcheck"]);
+Route::post("/suggester",[CourseController::class,"suggester"]);

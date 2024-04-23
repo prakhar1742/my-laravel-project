@@ -12,42 +12,64 @@ class CourseController extends Controller
         $this->client = $client;
     }
 
-    public function ping(Request $req)
+  public function ping(Request $req)
+
     {
+
         $searchh = $req->param ?? "*:*";
-    
+
     try {
+
         $query = $this->client->createSelect();
-
+ 
         // Create facet field outside the loop
+
         $facetField = $query->getFacetSet()->createFacetField('subject_name');
+
         $facetField->setField('subject_name')->setMinCount(1)->setLimit(5);
-
+ 
         if ($searchh != "*:*") {
+
             $data = [];
+
             $facet = [];
+
             $sea = '"' . $searchh . '"'; // Enclose search term within double quotes
+
             $query->setQuery("exam_name:" . $sea . " OR subject_name:" . $sea . " OR chapter_name:" . $sea . " OR title:" . $sea);
-
+ 
             // Execute the query
+
             $result = $this->client->select($query);
-
+ 
             // Collect facet values for this search term
+
             $da = $result->getDocuments();
+
             $facetSet = $result->getFacetSet();
+
             $categoryFacet = $facetSet->getFacet('subject_name');
+
             $facet += $categoryFacet->getValues();
+
             $data = array_merge($data, $da);
+
         } else {
+
             // If search is empty, execute the query directly
+
             $facet = "Enter search term";
+
         }
-
+ 
         return view("courseresult", ["data" => $data, "facet" => $facet, "searchh" => $searchh]);
-
+ 
     } catch (\Solarium\Exception $e) {
+
         return response()->json('ERROR', 500);
+
     }
+
     }
 
     
@@ -70,27 +92,23 @@ class CourseController extends Controller
             $facetField = $query->getFacetSet()->createFacetField('subject_name');
             $facetField->setField('subject_name')->setMinCount(1);
     
-            $search = explode(" ", $searchh);
-    
-            foreach ($search as $sea) {
-                // Check if $sea is not a number
-                if (!is_numeric($sea)) {
-                    // Query for non-numeric $sea
-                    $query->setQuery("(exam_name:\"$sea\" OR chapter_name:\"$sea\" OR title:\"$sea\") AND subject_name:\"$idd\"");
-                } else {
-                    // Query for numeric $sea
-                    $query->setQuery("(exam_name:*$sea* OR chapter_name:*$sea* OR lang_id:$sea) AND subject_name:\"$idd\"");
-                }
-    
-                // Execute the query
-                $result = $this->client->select($query);
-    
-                // Get documents and facets
-                $data += $result->getDocuments();
-                $facetSet = $result->getFacetSet();
-                $categoryFacet = $facetSet->getFacet('subject_name');
-                $facet += $categoryFacet->getValues();
+            // Check if the search term is numeric
+            if (!is_numeric($searchh)) {
+                // Query for non-numeric search term
+                $query->setQuery("(exam_name:\"$searchh\" OR chapter_name:\"$searchh\" OR title:\"$searchh\") AND subject_name:\"$idd\"");
+            } else {
+                // Query for numeric search term
+                $query->setQuery("(exam_name:*$searchh* OR chapter_name:*$searchh* OR lang_id:$searchh) AND subject_name:\"$idd\"");
             }
+    
+            // Execute the query
+            $result = $this->client->select($query);
+    
+            // Get documents and facets
+            $data = $result->getDocuments();
+            $facetSet = $result->getFacetSet();
+            $categoryFacet = $facetSet->getFacet('subject_name');
+            $facet = $categoryFacet->getValues();
     
             // Return the results
             return view("courseresult", ["data" => $data, "facet" => $facet, "searchh" => $searchh]);    
@@ -99,5 +117,48 @@ class CourseController extends Controller
             return response()->json('ERROR', 500);
         }
     }
+
+    public function spellCheck(Request $req){
+        $query = $this->client->createSelect();
+        $queryTerm = $req->param; 
+        $query->setQuery($queryTerm);
+        $query->setHandler('spell');
+
+        $spellcheck = $query->getSpellcheck();
+        $spellcheck->setDictionary('default'); 
+        $spellcheck->setCount(5);      
+
+        $result = $this->client->select($query);
+        return response()->json(["spellCheck"=>$result]);
+
+        
+        
+    }
+
+    public function suggester(Request $req){
+        $query = $this->client->createSuggester();
+$query->setQuery($req->param); //multiple terms
+$query->setDictionary('FuzzySuggester');
+$query->setCount(3);
+
+$resultset = $this->client->suggester($query);
+$suggestions=array();
+foreach ($resultset as $term => $termResult) {
+    foreach ($termResult as $result) {
+        array_push($suggestions,$result);
+    }
+    
+
+}
+
+
+$suggestions = $suggestions[0]->getSuggestions();
+
+
+
+        return response()->json($suggestions, 200 );
+    }
+    
+    
        
 }
