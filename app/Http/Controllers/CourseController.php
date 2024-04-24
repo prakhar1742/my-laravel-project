@@ -34,15 +34,15 @@ class CourseController extends Controller
 
             $facet = [];
 
-            $sea = '"' . $searchh . '"'; // Enclose search term within double quotes
+            $sea = '"' . $searchh . '"'; 
 
             $query->setQuery("exam_name:" . $sea . " OR subject_name:" . $sea . " OR chapter_name:" . $sea . " OR title:" . $sea);
  
-            // Execute the query
+           
 
             $result = $this->client->select($query);
  
-            // Collect facet values for this search term
+           
 
             $da = $result->getDocuments();
 
@@ -56,7 +56,6 @@ class CourseController extends Controller
 
         } else {
 
-            // If search is empty, execute the query directly
 
             $facet = "Enter search term";
 

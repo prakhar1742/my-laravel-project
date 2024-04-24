@@ -11,8 +11,8 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4; /* Light background for a softer look */
-            color: #333; /* Darker text for better readability */
+            background-color: #f4f4f4;
+            color: #333;
         }
 
         .container {

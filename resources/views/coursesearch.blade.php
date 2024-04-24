@@ -66,11 +66,23 @@
     <form method="get" action="{{url('/courseresult')}}">
         @csrf
         <input type="text" name="param" id="textInput" placeholder="Enter your query"/>
-        <input type="submit" value="search"/>
+        <input type="submit" value="search" id="searchButton"/>
     </form>
     <div id="response">search result</div>
     <div id="suggestionsContainer"></div>
-    <p id="suggestion" onClick="document.getElementById('textInput').value=document.getElementById('suggestion').innerText"></p>
+    <p id="suggestion" onClick="inputchange()"></p>
+    <script>
+        function inputchange(){
+            document.getElementById('textInput').value=document.getElementById('suggestion').innerText;
+            const event = new Event('input', { bubbles: true });
+            document.getElementById("textInput").dispatchEvent(event);
+        }
+        function suggestionClick(element){
+            console.log(element.textContent);
+            document.getElementById("textInput").value=element.textContent;
+            document.getElementById("searchButton").click();
+        }
+    </script>
     <script>
         $(document).ready(function() {
             let timeId;
@@ -95,7 +107,7 @@
                     });
                     }, 500);
                 } else {
-                    $('#response').html('');
+                    $('#suggestion').html('');
                 }
             });
         });
@@ -130,7 +142,7 @@
                     });
                     }, 500);
                 } else {
-                    $('#response').html('');
+                    $('#response').html('search result');
                 }
             });
         });
@@ -156,7 +168,8 @@
                             for(var key in response){
                                 
                                 console.log(response[key]["term"]);
-                                $("#suggestionsContainer").append(response[key]["term"]);
+                                // $("#suggestionsContainer").append(response[key]["term"]);
+                                $("#suggestionsContainer").append("<span onClick='suggestionClick(this)'>" + response[key]["term"] + "</span>");
                                 $("#suggestionsContainer").append("<br/>");
                             }
                         },
@@ -166,7 +179,7 @@
                     });
                     }, 500);
                 } else {
-                    $('#response').html('');
+                    $("#suggestionsContainer").html("");
                 }
             });
         });
