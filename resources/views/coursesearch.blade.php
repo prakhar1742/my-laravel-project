@@ -59,7 +59,23 @@
         #suggestion:hover {
             text-decoration: underline;
         }
-        
+        #suggestionsContainer {
+    margin-top: 10px; 
+  }
+
+  #suggestionsContainer span {
+    display: inline-block;
+    padding: 5px 10px; 
+    margin: 5px;
+    background-color: #f0f0f0; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+  }
+
+  #suggestionsContainer span:hover {
+    background-color: #e0e0e0
+  }
     </style>
 </head>
 <body>
@@ -70,7 +86,9 @@
     </form>
     <div id="response">search result</div>
     <div id="suggestionsContainer"></div>
-    <p id="suggestion" onClick="inputchange()"></p>
+    <div style="text-align: center;">
+    <span id="suggestion" onClick="inputchange()" style="display: inline-block;"></span>
+    </div>
     <script>
         function inputchange(){
             document.getElementById('textInput').value=document.getElementById('suggestion').innerText;
@@ -84,105 +102,79 @@
         }
     </script>
     <script>
-        $(document).ready(function() {
-            let timeId;
-            $('#textInput').on('input', function() {
-                clearTimeout(timeId);
-                var inputText = $(this).val();
-                if (inputText.trim() !== '') {
-                    timeId=setTimeout(() => {
-                        $.ajax({
-                        url: "/api/spellcheck",
-                        type: 'POST', 
-                        data: {
-                            param: inputText
-                        },
-                        success: function(response) {
-                            $("#suggestion").html(" "); 
-                            $("#suggestion").html(response["spellCheck"]); 
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
-                    }, 500);
-                } else {
-                    $('#suggestion').html('');
-                }
-            });
-        });
-    </script>
+        function spellCheck(inputText) {
+    return $.ajax({
+        url: "/api/spellcheck",
+        type: 'POST',
+        data: {
+            param: inputText
+        }
+    });
+}
 
-    <script>
-        $(document).ready(function() {
-            let timeId;
-            $('#textInput').on('input', function() {
-                clearTimeout(timeId);
-                var inputText = $(this).val();
-                if (inputText.trim() !== '') {
-                    timeId=setTimeout(() => {
-                        $.ajax({
-                        url: "/api/api",
-                        type: 'POST', 
-                        data: {
-                            param: inputText
-                        },
-                        success: function(response) {
-                            $("#response").html(" ");  
-                            var searchh = response["searchh"] ? response["searchh"] : null;
-                            for(var key in response["facet"]){
-                                url="{{url('/coursesubmit')}}/"+encodeURIComponent(key)+"/"+encodeURIComponent(searchh);
-                                $("#response").append("<a href="+url+"><p>"+response["facet"][key]+ " in "+key+"</p></a>");
-                            }
-                            if(response["facet"].length==0){$("#response").html("OOPs nothing found");}
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
-                    }, 500);
-                } else {
-                    $('#response').html('search result');
-                }
-            });
-        });
-    </script>
+function searchApi(inputText) {
+    return $.ajax({
+        url: "/api/api",
+        type: 'POST',
+        data: {
+            param: inputText
+        }
+    });
+}
 
+function suggesterApi(inputText) {
+    return $.ajax({
+        url: "/api/suggester",
+        type: 'POST',
+        data: {
+            param: inputText
+        }
+    });
+}
+
+    </script>
     <script>
-        $(document).ready(function() {
-            let timeId;
-            $('#textInput').on('input', function() {
-                clearTimeout(timeId);
-                var inputText = $(this).val();
-                if (inputText.trim() !== '') {
-                    timeId=setTimeout(() => 
-                    {
-                        $.ajax({
-                        url: "/api/suggester",
-                        type: 'POST', 
-                        data: {
-                            param: inputText
-                        },
-                        success: function(response) {
-                            $("#suggestionsContainer").html("");
-                            for(var key in response){
-                                
-                                console.log(response[key]["term"]);
-                                // $("#suggestionsContainer").append(response[key]["term"]);
-                                $("#suggestionsContainer").append("<span onClick='suggestionClick(this)'>" + response[key]["term"] + "</span>");
-                                $("#suggestionsContainer").append("<br/>");
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
-                        }
-                    });
-                    }, 500);
-                } else {
+    $(document).ready(function() {
+    let timeId;
+    $('#textInput').on('input', function() {
+        clearTimeout(timeId);
+        var inputText = $(this).val();
+        if (inputText.trim() !== '') {
+            timeId = setTimeout(() => {
+                Promise.all([spellCheck(inputText), searchApi(inputText), suggesterApi(inputText)])
+                .then(function(responses) {
+
+                    $("#suggestion").html(" ");
+                    $("#suggestion").html(responses[0]["spellCheck"]);
+
+                    $("#response").html(" ");
+                    var searchh = responses[1]["searchh"] ? responses[1]["searchh"] : null;
+                    for(var key in responses[1]["facet"]){
+                        var url = "{{url('/coursesubmit')}}/" + encodeURIComponent(key) + "/" + encodeURIComponent(searchh);
+                        $("#response").append("<a href=" + url + "><p>" + responses[1]["facet"][key] + " in " + key + "</p></a>");
+                    }
+                    if(responses[1]["facet"].length == 0){
+                        $("#response").html("OOPs nothing found");
+                    }
+
                     $("#suggestionsContainer").html("");
-                }
-            });
-        });
-    </script>
+                    for(var key in responses[2]){
+                        console.log(responses[2][key]["term"]);
+                        $("#suggestionsContainer").append("<span onClick='suggestionClick(this)'>" + responses[2][key]["term"] + "</span>");
+                        $("#suggestionsContainer").append("<br/>");
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                });
+            }, 500);
+        } else {
+            $('#suggestion').html('');
+            $('#response').html('search result');
+            $("#suggestionsContainer").html("");
+        }
+    });
+});
+</script>
 </body>
 </html>
