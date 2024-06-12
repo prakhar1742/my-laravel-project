@@ -24,3 +24,4 @@ Route::post("/api",[AjaxController::class,"data"]);
 Route::get("/get",[AjaxController::class,"get"]);
 Route::post("/spellcheck",[CourseController::class,"spellcheck"]);
 Route::post("/suggester",[CourseController::class,"suggester"]);
+Route::post("/linksuggester",[CourseController::class,"linksuggester"]);

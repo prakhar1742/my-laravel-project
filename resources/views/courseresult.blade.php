@@ -25,26 +25,26 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 200px; /* Fixed width for the facet navigation */
-            height: 100%; /* Full height to stick to the left */
-            background-color: #007bff; /* Blueish background */
+            width: 200px; 
+            height: 100%;
+            background-color: #007bff;
             padding: 20px;
-            overflow-y: auto; /* Enable scrolling if content overflows */
-            z-index: 1000; /* Ensure it's above other content */
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+            overflow-y: auto;
+            z-index: 1000; 
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1); 
         }
 
         .facet-nav a {
             display: block;
             text-align: left;
-            color: #ffffff; /* White text for better contrast */
+            color: #ffffff; 
             text-decoration: none;
             padding: 10px 0;
             transition: background-color 0.3s ease;
         }
 
         .facet-nav a:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+            background-color: #0056b3; 
         }
 
         .back-button {
@@ -68,7 +68,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 30px;
             margin-bottom: 30px;
-            margin-left: 220px; /* Adjusted margin to accommodate the facet navigation */
+            margin-left: 220px;
             transition: box-shadow 0.3s ease;
         }
 

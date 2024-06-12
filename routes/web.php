@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\SolariumController;
 use App\Http\Controllers\CourseController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -65,3 +67,5 @@ Route::get("/submit/{idd}/{searchh}",[SolariumController::class,"search"]);
 Route::get("/course",function(){return view("coursesearch");});
 Route::get("/courseresult",[CourseController::class,"ping"]);
 Route::get("/coursesubmit/{idd}/{searchh}",[CourseController::class,"search"]);
+Route::get("/links",function(){{return view("links"); }});
+Route::post("/submitlink",[CourseController::class,"linksubmit"]);

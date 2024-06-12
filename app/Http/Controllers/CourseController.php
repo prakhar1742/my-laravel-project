@@ -183,6 +183,66 @@ $suggestions = $suggestions[0]->getSuggestions();
 
         return response()->json($suggestions, 200 );
     }
+
+  
+ public function linksubmit(Request $req){
+        
+        try {
+            $this->client->getEndpoint('localhost')->setCore('prakhar');
+
+            $query = $this->client->createSelect();
+    
+            
+            $data=[];
+            
+            $sea='"'.$req->textInput.'"';
+            $query->setQuery("tags:".$sea."OR title:".$sea);
+            
+            // Execute the query
+            $result = $this->client->select($query);
+    
+            // Get documents and facets
+            $data = $result->getDocuments();
+            return redirect($data[0]->link);
+            // Return the results
+            // return view("submitlink", ["data" => $data]);    
+        } catch (\Solarium\Exception $e) {
+            // Handle exceptions
+            return response()->json('ERROR', 500);
+        }
+
+    }
+
+    public function linksuggester(Request $req){
+        $this->client->getEndpoint('localhost')->setCore('prakhar');
+
+            $query = $this->client->createSuggester();
+            $sQuery=$req->param." ".$req->package_id;
+            $query->setQuery($sQuery);
+    $query->setDictionary('mySuggester');
+    $query->setCount(5);
+    
+    $resultset = $this->client->suggester($query);
+    $suggestions=array();
+    foreach ($resultset as $term => $termResult) {
+        foreach ($termResult as $result) {
+            
+            array_push($suggestions,$result);
+        }
+        
+    
+    }
+    
+    
+    $suggestions = $suggestions[0]->getSuggestions();
+    
+    
+    
+            return response()->json($suggestions, 200 );
+        }
+    
+
+
     
     
        
